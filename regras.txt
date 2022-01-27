@@ -1,0 +1,9 @@
+Usuario
+- Usuário digita no campo textarea
+- Aperta enter para enviar
+- Tem que adicionar o texto na listagem
+
+Dev
+- [x]campo criado
+- Vamos usar o onChange, o useState (ter if pra caso seja enter limpar a variável)
+- [] Lista de mensagens useState

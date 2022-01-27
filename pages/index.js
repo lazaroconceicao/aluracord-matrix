@@ -87,7 +87,6 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={function (infosDoEvento) {
               infosDoEvento.preventDefault();
-              console.log('enviou o formulario');
               roteamento.push('/chat');
               // window.location.href = '/chat';
             }}
