@@ -26,6 +26,13 @@ function GlobalStyle() {
       }
       /* ./App fit Height */
 
+      ul::-webkit-scrollbar, 
+      textarea::-webkit-scrollbar {
+        width: 5px;
+      }
+      ul::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-thumb{
+        background-color: rgba(36, 39, 52, .7);
+        border-radius: 50px;
       
     `}</style>
   );
