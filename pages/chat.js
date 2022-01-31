@@ -26,14 +26,7 @@ export default function ChatPage() {
   const usuarioLogado = roteamento.query.username;
   const [mensagem, setMensagem] = React.useState("");
   const [listaMensagem, setListaMensagem] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
-
-  React.useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     supabaseClient
@@ -43,6 +36,7 @@ export default function ChatPage() {
       .then(({ data }) => {
         //   console.log("Dados da consulta", dados);
         setListaMensagem(data);
+        setLoading(false);
       });
 
     const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
@@ -110,9 +104,18 @@ export default function ChatPage() {
         }}
       >
         <Header />
-
+        
         {loading ? (
+          <Box
+          styleSheet={{            
+            display: "flex",
+            flex: 1,        
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          >            
           <ClipLoader size={150} color={"#123abc"} loading={loading} />
+          </Box>
         ) : (
           <Box
             styleSheet={{
