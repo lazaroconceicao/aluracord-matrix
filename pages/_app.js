@@ -33,6 +33,7 @@ function GlobalStyle() {
       ul::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-thumb{
         background-color: rgba(36, 39, 52, .7);
         border-radius: 50px;
+      }
       
     `}</style>
   );

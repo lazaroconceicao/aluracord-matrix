@@ -111,9 +111,9 @@ export default function ChatPage() {
       >
         <Header />
 
-        {/* {loading ? ( */}
-          {/* <ClipLoader size={150} color={"#123abc"} loading={loading} /> */}
-        {/* ) : ( */}
+        {loading ? (
+          <ClipLoader size={150} color={"#123abc"} loading={loading} />
+        ) : (
           <Box
             styleSheet={{
               position: "relative",
@@ -201,7 +201,7 @@ export default function ChatPage() {
             /> }
             </Box>
           </Box>
-        {/* )} */}
+        )}
       </Box>
     </Box>
   );
