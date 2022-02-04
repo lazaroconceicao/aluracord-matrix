@@ -35,6 +35,7 @@ function GlobalStyle() {
         border-radius: 50px;
       }
       
+      
     `}</style>
   );
 }
