@@ -3,6 +3,7 @@ import React from "react";
 import appConfig from "../config.json";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import ClipLoader from "react-spinners/ClipLoader";
+import { BiTrash } from "react-icons/bi";
 import { useRouter } from "next/router";
 import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 
@@ -19,6 +20,22 @@ function escutaMensagensEmTempoReal(adicionaMensagem) {
       adicionaMensagem(respostaLive.new);
     })
     .subscribe();
+}
+
+function handleRemoveMessagem(mensagemClicada, setListaMensagem, mensagens) {
+  // console.log('menssagem clicada', mensagemClicada);
+  // console.log('mensagens', mensagens);
+  const mensagensFiltradas = mensagens.filter((m) => m.id !== mensagemClicada.id);
+  // console.log('mensagensFiltradas', mensagensFiltradas);
+  setListaMensagem(mensagensFiltradas);
+
+  supabaseClient
+    .from('mensagens')
+    .delete()
+    .filter('id', 'in', `(${mensagemClicada.id})`)
+    .then(({ data }) => {
+        console.log("removendo mensagem", data);
+    });
 }
 
 export default function ChatPage() {
@@ -41,19 +58,16 @@ export default function ChatPage() {
 
     const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
       console.log("Nova mensagem", novaMensagem);
-      console.log('listaMensagem', listaMensagem);
+      console.log("listaMensagem", listaMensagem);
 
       setListaMensagem((valorAtualDaLista) => {
-        console.log('valorAtualDaLista', valorAtualDaLista)
-        return [
-          novaMensagem, 
-          ...valorAtualDaLista
-        ]
+        console.log("valorAtualDaLista", valorAtualDaLista);
+        return [novaMensagem, ...valorAtualDaLista];
       });
     });
     return () => {
       subscription.unsubscribe();
-    }
+    };
   }, []);
 
   function handleNovaMensagem(novaMensagem) {
@@ -104,17 +118,17 @@ export default function ChatPage() {
         }}
       >
         <Header />
-        
+
         {loading ? (
           <Box
-          styleSheet={{            
-            display: "flex",
-            flex: 1,        
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          >            
-          <ClipLoader size={150} color={"#123abc"} loading={loading} />
+            styleSheet={{
+              display: "flex",
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ClipLoader size={150} color={"#123abc"} loading={loading} />
           </Box>
         ) : (
           <Box
@@ -129,7 +143,7 @@ export default function ChatPage() {
               padding: "16px",
             }}
           >
-            <MessageList mensagens={listaMensagem} />
+            <MessageList mensagens={listaMensagem} setListaMensagem={setListaMensagem} />
 
             {/* {listaMensagem.map((mensagemAtual) =>{
                         return (
@@ -177,31 +191,33 @@ export default function ChatPage() {
                   handleNovaMensagem(":sticker: " + sticker);
                 }}
               />
-              { <Button
-              label="Enviar"
-              size="sm"
-              buttonColors={{
-                contrastColor: appConfig.theme.colors.neutrals["000"],
-                mainColor: appConfig.theme.colors.primary[500],
-                mainColorLight: appConfig.theme.colors.primary[400],
-                mainColorStrong: appConfig.theme.colors.primary[500],
-              }}
-              styleSheet={{
-                marginLeft: '10px',
-                disabled: {},
-                focus: {},
-                hover: {
-                  cursor: "pointer",
-                },
-                padding: "11.5px 12px",
-                marginBottom: "8px",
-              }}
-              onClick={(event) => {
-                if (event.type === "click") {
-                  handleNovaMensagem(mensagem);
-                }
-              }}
-            /> }
+              {
+                <Button
+                  label="Enviar"
+                  size="sm"
+                  buttonColors={{
+                    contrastColor: appConfig.theme.colors.neutrals["000"],
+                    mainColor: appConfig.theme.colors.primary[500],
+                    mainColorLight: appConfig.theme.colors.primary[400],
+                    mainColorStrong: appConfig.theme.colors.primary[500],
+                  }}
+                  styleSheet={{
+                    marginLeft: "10px",
+                    disabled: {},
+                    focus: {},
+                    hover: {
+                      cursor: "pointer",
+                    },
+                    padding: "11.5px 12px",
+                    marginBottom: "8px",
+                  }}
+                  onClick={(event) => {
+                    if (event.type === "click") {
+                      handleNovaMensagem(mensagem);
+                    }
+                  }}
+                />
+              }
             </Box>
           </Box>
         )}
@@ -260,36 +276,49 @@ function MessageList(props) {
               padding: "6px",
               marginBottom: "12px",
               hover: {
-                backgroundColor: appConfig.theme.colors.neutrals[700],
+              backgroundColor: appConfig.theme.colors.neutrals[700],
               },
             }}
           >
             <Box
               styleSheet={{
                 marginBottom: "8px",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                display: "flex",
               }}
             >
-              <Image
-                styleSheet={{
-                  width: "20px",
-                  height: "20px",
-                  borderRadius: "50%",
-                  display: "inline-block",
-                  marginRight: "8px",
+              <Box style={{ justifyContent: "flex-start" }}>
+                <Image
+                  styleSheet={{
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "50%",
+                    display: "inline-block",
+                    marginRight: "8px",
+                  }}
+                  src={`https://github.com/${mensagem.de}.png`}
+                />
+                <Text tag="strong">{mensagem.de}</Text>
+                <Text
+                  styleSheet={{
+                    fontSize: "10px",
+                    marginLeft: "8px",
+                    color: appConfig.theme.colors.neutrals[300],
+                  }}
+                  tag="span"
+                >
+                  {new Date().toLocaleDateString()}
+                </Text>
+              </Box>
+                <BiTrash 
+                type="button" 
+                onClick={() => {
+                  handleRemoveMessagem(mensagem, props.setListaMensagem, props.mensagens)
                 }}
-                src={`https://github.com/${mensagem.de}.png`}
-              />
-              <Text tag="strong">{mensagem.de}</Text>
-              <Text
-                styleSheet={{
-                  fontSize: "10px",
-                  marginLeft: "8px",
-                  color: appConfig.theme.colors.neutrals[300],
-                }}
-                tag="span"
-              >
-                {new Date().toLocaleDateString()}
-              </Text>
+                                
+                />              
             </Box>
             {/* Declarativo */}
             {/* Condicional:{mensagem.texto.startsWith(':sticker:').toString()} */}
